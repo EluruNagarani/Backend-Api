@@ -6,11 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.chubb.assessment.api.dto.response.FlagPolicyResponse;
 import com.chubb.assessment.api.dto.response.MoneyResponse;
 import com.chubb.assessment.api.dto.response.PagedPolicyResponse;
 import com.chubb.assessment.api.dto.response.PolicyStatisticsResponse;
 import com.chubb.assessment.api.dto.response.PolicyStatusResponse;
 import com.chubb.assessment.api.dto.response.PolicySummaryResponse;
+import com.chubb.assessment.domain.models.FlagResult;
 import com.chubb.assessment.domain.models.LineOfBusiness;
 import com.chubb.assessment.domain.models.Policy;
 import com.chubb.assessment.domain.models.PolicyStatistics;
@@ -46,6 +48,10 @@ public class DomainToResponseDto {
                 policy.getEffectiveDate(),
                 policy.getExpiryDate(),
                 isExpiringSoon(policy.getExpiryDate()));
+    }
+
+    public FlagPolicyResponse toFlagResponse(FlagResult result) {
+        return new FlagPolicyResponse(result.requested(), result.flagged(), result.missingIds());
     }
 
     public PolicyStatisticsResponse toStatisticsResponse(PolicyStatistics statistics) {

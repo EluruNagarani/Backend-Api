@@ -14,9 +14,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface PolicyRepository extends JpaRepository<PolicyEntity, UUID>, JpaSpecificationExecutor<PolicyEntity> {
 
-    @Modifying
-    @Query("UPDATE PolicyEntity p SET p.flaggedForReview = true WHERE p.id IN :ids")
-    int flagForReview(@Param("ids") List<UUID> ids);
+    // @Modifying
+    // @Query("UPDATE PolicyEntity p SET p.flaggedForReview = true WHERE p.id IN :ids")
+    // int flagForReview(@Param("ids") List<UUID> ids);
 
     @Query("SELECT p.status AS status, COUNT(p) AS total FROM PolicyEntity p GROUP BY p.status")
     List<StatusCount> countGroupedByStatus();

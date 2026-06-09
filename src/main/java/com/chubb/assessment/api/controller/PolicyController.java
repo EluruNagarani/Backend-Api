@@ -5,11 +5,13 @@ import java.util.UUID;
 
 import com.chubb.assessment.api.dto.request.FlagPolicyRequest;
 import com.chubb.assessment.api.dto.request.PolicyFilterRequest;
+import com.chubb.assessment.api.dto.response.FlagPolicyResponse;
 import com.chubb.assessment.api.dto.response.PagedPolicyResponse;
 import com.chubb.assessment.api.dto.response.PolicyStatisticsResponse;
 import com.chubb.assessment.api.dto.response.PolicySummaryResponse;
 import com.chubb.assessment.api.mapper.DomainToResponseDto;
 import com.chubb.assessment.api.mapper.RequestDtoToDomain;
+import com.chubb.assessment.domain.models.FlagResult;
 import com.chubb.assessment.domain.models.LineOfBusiness;
 import com.chubb.assessment.domain.models.Policy;
 import com.chubb.assessment.domain.models.PolicyFilter;
@@ -89,10 +91,10 @@ public class PolicyController {
     }
 
     @PatchMapping(PATH_FLAG)
-    public ResponseEntity<Void> flagPoliciesForReview(
+    public ResponseEntity<FlagPolicyResponse> flagPoliciesForReview(
             @Valid @RequestBody FlagPolicyRequest request) {
-        policyService.flagPoliciesForReview(request.policyIds());
-        return ResponseEntity.noContent().build();
+        FlagResult result = policyService.flagPoliciesForReview(request.policyIds());
+        return ResponseEntity.ok(responseMapper.toFlagResponse(result));
     }
 
     @GetMapping(PATH_SUMMARY)
