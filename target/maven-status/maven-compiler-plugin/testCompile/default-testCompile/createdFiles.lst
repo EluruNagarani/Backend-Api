@@ -1,1 +1,6 @@
+com\chubb\assessment\service\PolicyServiceTest$2.class
+com\chubb\assessment\service\PolicyServiceTest.class
+com\chubb\assessment\infrastructure\persistence\repository\PolicyRepositoryIntegrationTest.class
+com\chubb\assessment\api\controller\PolicyControllerTest.class
 com\chubb\assessment\ChubAssessmentApplicationTests.class
+com\chubb\assessment\service\PolicyServiceTest$1.class

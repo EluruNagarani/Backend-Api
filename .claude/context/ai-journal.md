@@ -22,3 +22,38 @@ This file logs every prompt: **when** it was prompted, **what** was asked, **wha
 | 16 | 2026-06-07 | Remove the comments above each method (look dirty) and add this as a rule. | Added a **Comments** section to `java-code-style.md` (no comments/Javadoc above methods; comment only the non-obvious *why*). Removed the `getPolicies` Javadoc and inline TODO. Compiled OK. | Accepted |
 | 17 | 2026-06-07 | Define the `/api/policies` endpoint in the OpenAPI spec. | Replaced empty `paths` with `GET /api/policies` (operationId `getPolicies`, `page`/`size` params, `200` → PagedPolicyResponse, `400` & `503` → ErrorResponse). Validated YAML/refs. Noted no `@RestControllerAdvice` yet, so 400/503 shapes are not produced at runtime. | Accepted |
 | 18 | 2026-06-07 | Add the changes to the AI journal. | Appended entries 10–18 covering the OpenAPI contract-first work, Postgres removal, DTOs, controller outline, and the new comments rule. | Accepted |
+| 19 | 2026-06-07 | Create the `Policy` entity class in `domain/models` from the supplied field table (id UUID PK, policyNumber `POL-XXXXXX` unique, policyholderName, lineOfBusiness enum [Property/Casualty/A&H/Marine], status enum [Active/Expired/Pending/Cancelled], premiumAmount decimal 1k–5M, currency, effectiveDate, expiryDate, region, underwriter, flaggedForReview default false, createdAt/updatedAt). | Created the model with the listed fields and the two enums. | Accepted |
+| 20 | 2026-06-07 | Add all required annotations to `Policy.java` — Lombok plus database/persistence annotations. | Added Lombok and JPA annotations to the policy class. | Accepted |
+| 21 | 2026-06-07 | Implement `GET /api/v1/policies` in `PolicyController`: pagination + `size`, `sort=field,dir`, filters (status, lineOfBusiness, region, effectiveDateFrom/To), and free-text `search` across policyNumber/policyholderName/underwriter. | Implemented the list endpoint with `page`/`size`/`sort`, the filter params, and the search param wired through to the service. | Accepted |
+| 22 | 2026-06-07 | Add `GET /api/v1/policies/{id}`. | Added the by-id endpoint to the controller. | Accepted |
+| 23 | 2026-06-07 | Create the `PolicyService` class. | Created `PolicyService` in the service layer. | Accepted |
+| 24 | 2026-06-07 | Add `PATCH /api/v1/policies/flag` — bulk flag policies for review (accepts an array of policy IDs). | Added the bulk flag-for-review endpoint accepting a list of ids. | Accepted |
+| 25 | 2026-06-07 | Add `GET /api/v1/policies/summary` — aggregated statistics: counts by status, total premium by line of business, expiring-soon count. | Added the summary/statistics endpoint and the supporting aggregation. | Accepted |
+| 26 | 2026-06-07 | The entity class exists in both `domain/models` and `infrastructure/persistence/entity` — check the two paths and remove the duplicate (`Policy.java` vs `PolicyEntity.java`). | Reviewed both paths; kept the pure `Policy` domain model and the JPA `PolicyEntity`, removing the genuine duplicate so the domain and persistence representations were distinct. | Challenged |
+| 27 | 2026-06-08 | Implement the helper mapping stubs left as comments in `PolicyController` (`convertToPagedPolicyResponse`, `convertToSummaryResponse`, `convertToStatisticsResponse`). | Replaced the stub comments with real mapping via dedicated `DomainToResponseDto`/`RequestDtoToDomain` mappers (display-name transforms, `isExpiringSoon`, paged metadata). | Accepted |
+| 28 | 2026-06-08 | OpenAPI contract. | Updated `policies-api.yaml` to the full contract-first spec (all four operations, page/size/sort params, filter vs. display enums, statistics + flag schemas, shared error responses). | Accepted |
+| 29 | 2026-06-08 | Fix the compile error in `EntityToDomain.java`. | Fixed the mapper compile error. | Accepted |
+| 30 | 2026-06-08 | DB choice — use H2 instead of Oracle; create a SQL file that auto-inserts seed rows into H2 on server start. | Switched to in-memory H2 (`application.yml` datasource, `sql.init.mode: always`, `defer-datasource-initialization`) and added `data.sql` seeding 10 APAC policies. | Accepted |
+| 31 | 2026-06-08 | Still getting an error in `EntityToDomain.java` — fix it. | Fixed the remaining mapper error. | Accepted |
+| 32 | 2026-06-08 | Build the Maven application. | Ran the Maven build. | Accepted |
+| 33 | 2026-06-08 | Build error: `builder()` not found in `Policy.java` from `EntityToDomain`, even though `@Builder` is present — fix it. | Resolved the Lombok builder error so the mapper compiled (annotation/processor wiring). | Accepted |
+| 34 | 2026-06-08 | Start the embedded server. | Started the embedded Tomcat server. | Accepted |
+| 35 | 2026-06-09 | Open/check the Spring Boot console logs. | Surfaced the running app's console logs. | Accepted |
+| 36 | 2026-06-09 | Stop the embedded Tomcat server. | Stopped the server. | Accepted |
+| 37 | 2026-06-09 | Use the supplied `@Transactional flagForReview(...)` implementation (findAllById → setFlaggedForReview → saveAll → `FlagResult` with bulk-op logging) in `PolicyService`. | Applied the provided transactional flag-for-review logic in the service. | Accepted |
+| 38 | 2026-06-09 | Check the application for any errors and fix them. | Investigated and fixed the reported errors. | Accepted |
+| 39 | 2026-06-09 | Restart the embedded server. | Restarted the server. | Accepted |
+| 40 | 2026-06-09 | `PATCH /flag` still returns 204 in Swagger but the flag value isn't updating — fix so it actually flags. | Fixed the flag update so the endpoint persists `flaggedForReview` (changed the request shape to `FlagPolicyRequest` and returned a `FlagPolicyResponse`). | Challenged |
+| 41 | 2026-06-09 | Restart the embedded server. | Restarted the server. | Accepted |
+| 42 | 2026-06-09 | Write unit test cases for all the Java classes. | Added `PolicyControllerTest` (MockMvc), `PolicyServiceTest` (unit), `PolicyRepositoryIntegrationTest` (`@DataJpaTest`), and the context-load test. | Accepted |
+| 43 | 2026-06-09 | Restart the embedded server. | Restarted the server. | Accepted |
+| 44 | 2026-06-09 | Are `target/maven-archiver/pom.properties` and the `*.jar.original` required for this project? Confirm the app runs without them. | Confirmed both are Maven build outputs, not required; the app builds and runs without them. | Accepted |
+| 45 | 2026-06-09 | Restart the embedded server. | Restarted the server. | Accepted |
+| 46 | 2026-06-09 | As per the image, work and fix. | Implemented the fix shown in the supplied screenshot. | Accepted |
+| 47 | 2026-06-09 | k6 load testing is missing — add it. | Added `k6/load-test.js` (AC7: 50 VUs/1m, p95<500ms, <1% errors) and `k6/README.md`. | Accepted |
+| 48 | 2026-06-09 | `maven-wrapper.properties` was deleted — restore it. | Restored the Maven wrapper properties file. | Accepted |
+| 49 | 2026-06-09 | Add `target/` and `.mvn/wrapper` to `.gitignore`. | Added the ignore entries to `.gitignore`. | Accepted |
+| 50 | 2026-06-09 | k6 load testing is missing — fix it. | Re-verified/restored the k6 load test. | Accepted |
+| 51 | 2026-06-09 | Check the vulnerabilities. | Reviewed the project for security vulnerabilities. | Accepted |
+| 52 | 2026-06-09 | Add all changes to `ai-journal.md`. | First reconstructed entries from the codebase artifacts (no transcript loaded), which did not match the real prompts. | Challenged |
+| 53 | 2026-06-09 | The AI log is missing — that's the most important. | Extracted the actual prompts from the Claude Code session transcripts (`~/.claude/projects/**.jsonl`) and rewrote entries 19–53 to faithfully reflect what was asked. | Accepted |

@@ -11,6 +11,7 @@ com\chubb\assessment\domain\models\LineOfBusiness.class
 com\chubb\assessment\infrastructure\persistence\entity\PolicyEntity$PolicyEntityBuilder.class
 com\chubb\assessment\infrastructure\persistence\repository\PolicySpecifications.class
 com\chubb\assessment\infrastructure\persistence\repository\LineOfBusinessPremium.class
+com\chubb\assessment\api\dto\response\FlagPolicyResponse.class
 com\chubb\assessment\domain\models\PolicyStatus.class
 com\chubb\assessment\api\dto\response\PagedPolicyResponse.class
 com\chubb\assessment\api\dto\request\PolicyFilterRequest.class
@@ -23,5 +24,6 @@ com\chubb\assessment\api\dto\response\PolicyStatusResponse.class
 com\chubb\assessment\api\exception\GlobalExceptionHandler.class
 com\chubb\assessment\infrastructure\persistence\repository\PolicyRepository.class
 com\chubb\assessment\infrastructure\persistence\mapper\EntityToDomain.class
+com\chubb\assessment\domain\models\FlagResult.class
 com\chubb\assessment\api\dto\response\PolicyStatisticsResponse.class
 com\chubb\assessment\ChubAssessmentApplication.class
